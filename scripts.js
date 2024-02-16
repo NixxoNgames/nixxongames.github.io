@@ -2,11 +2,12 @@ const getDate = new Date();
 const day = getDate.toLocaleString('default', { weekday: 'long' });
 const month = getDate.toLocaleString('default', { month: 'long' });
 const year = getDate.getFullYear();
-const newTask = document.getElementById('new');
+const newTask = document.getElementsByClassName('add');
 const tasks = document.getElementById('tasks');
 const left = document.getElementById('left');
 const done = document.getElementById('done');
-const type = document.getElementById('dropbtn')
+const type = document.getElementById('dropbtn');
+const taskInput = document.getElementById('new');
 
 let checked = 0;
 let completedTasks = 0;
@@ -25,7 +26,7 @@ function addTask(task, type) {
       <div id="${task}div" class="task ${type}">
       <input type="checkbox" name="${task}" class="boxes" id="${task}"></span>
       <label for="${task}" id="${task}label">${task}</label>
-      <span class="taskDate">Created: now.</span>
+      <span class="taskDate">Created now.</span>
       <img src="/trash.png" onclick="removeTask('${task}')">
       </div>
       `;
@@ -47,7 +48,7 @@ function addTask(task, type) {
   } else if (document.getElementById(task).id == task) {
     alert('This task already exists.')
   }
-  document.getElementById('new').value = "";
+  taskInput.value = "";
 }
 
 function removeTask(idd) {
@@ -91,15 +92,21 @@ window.onload = () => {
     left.innerText = tasksLeft;
     done.innerText = completedTasks
   });
-  newTask.addEventListener("keydown", (key) => {
-    if (key.code === "Enter") {
-      if (newTask.value == "") {
-        return;
-      } else {
-        addTask(newTask.value, document.getElementById('dropbtn').innerText);
-        tasksLeft = document.getElementsByClassName('task').length + checked;
-      }
-    }
+  Array.from(newTask).forEach((element) => {
+    "keydown click".split(" ").forEach((event) => {
+      element.addEventListener(event, (key) => {
+        if (key.code === "Enter" || event === 'click') {
+          if (taskInput.value == "") {
+            return;
+          } else {
+            addTask(taskInput.value, document.getElementById('dropbtn').innerText);
+            tasksLeft = document.getElementsByClassName('task').length + checked;
+          }
+        }
+      })
+
+    });
+
   });
 
   tasks.addEventListener('change', (event) => {
