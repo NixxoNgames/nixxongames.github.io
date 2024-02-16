@@ -14,7 +14,19 @@
         <span id="done"></span> Tasks completed,
         <span id="left"></span> left.
     </span>
-    <input type="text" id="new"></input>
+        <label for="new">Enter your task:</label>
+        <div id="form">
+            <div class="dropdown">
+                <button id="dropbtn">Task type</button>
+                <div class="dropdown-content">
+                    <button onclick="document.getElementById('dropbtn').innerText = 'Personal'">Personal</button>
+                    <button onclick="document.getElementById('dropbtn').innerText = 'School'">School</button>
+                    <button onclick="document.getElementById('dropbtn').innerText = 'Work'">Work</button>
+                </div>
+            </div>
+            <input type="text" id="new">
+
+        </div>
 
     <div id="tasks">
     </div>

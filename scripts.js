@@ -4,8 +4,10 @@ const month = getDate.toLocaleString('default', { month: 'long' });
 const year = getDate.getFullYear();
 const newTask = document.getElementById('new');
 const tasks = document.getElementById('tasks');
-let left = document.getElementById('left');
-let done = document.getElementById('done');
+const left = document.getElementById('left');
+const done = document.getElementById('done');
+const type = document.getElementById('dropbtn')
+
 let checked = 0;
 let completedTasks = 0;
 let tasksLeft = 0;
@@ -13,17 +15,24 @@ let tasksLeft = 0;
 document.getElementById('date').innerText = day + "/" + month + "/" + year;
 done.innerText = completedTasks
 left.innerText = tasksLeft;
-function addTask(task) {
+function addTask(task, type) {
+  if (type === 'Task type') {
+    type = 'Personal';
+  }
   if (document.getElementById(task) == null) {
     tasks.innerHTML +=
       `
-      <div id="${task}div" class="task">
+      <div id="${task}div" class="task ${type}">
       <input type="checkbox" name="${task}" class="boxes" id="${task}"></span>
       <label for="${task}" id="${task}label">${task}</label>
       <img src="/trash.png" onclick="removeTask('${task}')">
       </div>
       `;
-    localStorage.setItem(task, false);
+    localStorage.setItem(task, JSON.stringify({
+      taskType: type,
+      checked: false
+    }));
+
     tasksLeft = document.getElementsByClassName('task').length + checked
     left.innerText = tasksLeft;
   } else if (document.getElementById(task).id == task) {
@@ -35,27 +44,28 @@ function addTask(task) {
 function removeTask(idd) {
   if (document.getElementById(idd).checked) {
     checked++
+    completedTasks--
   }
   document.getElementById(`${idd}div`).remove();
   localStorage.removeItem(idd);
   tasksLeft = document.getElementsByClassName('task').length + checked;
   left.innerText = tasksLeft;
-
+  done.innerText = completedTasks;
+  
 }
-
 // Events handlers
 window.onload = () => {
   Object.keys(localStorage).forEach(key => {
+    const taskData = JSON.parse(localStorage.getItem(key))
     tasks.innerHTML +=
       `
-      <div id="${key}div" class="task">
+      <div id="${key}div" class="task ${taskData.taskType}">
       <input type="checkbox" name="${key}" class="boxes" id="${key}"></span>
       <label for="${key}" id="${key}label">${key}</label>
       <img src="/trash.png" onclick="removeTask('${key}')">
       </div>
       `;
-
-    if (localStorage.getItem(key) === 'true') {
+    if (taskData.checked === true) {
       document.getElementById(key).setAttribute("checked", "true");;
       document.getElementById(`${key}label`).style.textDecoration = 'line-through';
       document.getElementById(`${key}label`).style.color = "gray";
@@ -64,13 +74,14 @@ window.onload = () => {
     }
     tasksLeft = document.getElementsByClassName('task').length + checked;
     left.innerText = tasksLeft;
+    done.innerText = completedTasks
   });
   newTask.addEventListener("keydown", (key) => {
     if (key.code === "Enter") {
       if (newTask.value == "") {
         return;
       } else {
-        addTask(newTask.value);
+        addTask(newTask.value, document.getElementById('dropbtn').innerText);
         tasksLeft = document.getElementsByClassName('task').length + checked;
       }
     }
@@ -81,17 +92,19 @@ window.onload = () => {
       const checkBox = event.target;
       const id = event.target.id;
       const label = document.getElementById(`${id}label`);
-
+      const taskData = JSON.parse(localStorage.getItem(id))
       if (checkBox.checked) {
         label.style.textDecoration = 'line-through';
         label.style.color = "gray";
         completedTasks++
         checked--
-        localStorage.setItem(id, true)
+        taskData.checked = true;
+        localStorage.setItem(id, JSON.stringify(taskData));
       } else {
         label.style.textDecoration = 'none';
         label.style.color = "black";
-        localStorage.setItem(id, false)
+        taskData.checked = false;
+        localStorage.setItem(id, JSON.stringify(taskData));
         completedTasks--
         checked++
       }
