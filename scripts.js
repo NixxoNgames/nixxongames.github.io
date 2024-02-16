@@ -25,12 +25,21 @@ function addTask(task, type) {
       <div id="${task}div" class="task ${type}">
       <input type="checkbox" name="${task}" class="boxes" id="${task}"></span>
       <label for="${task}" id="${task}label">${task}</label>
+      <span class="taskDate">Created: now.</span>
       <img src="/trash.png" onclick="removeTask('${task}')">
       </div>
       `;
+    let currentHour = new Date();
+    let am_pm = currentHour.toLocaleTimeString();
     localStorage.setItem(task, JSON.stringify({
       taskType: type,
-      checked: false
+      checked: false,
+      date: {
+        hour: getDate.toLocaleTimeString(),
+        day: getDate.toLocaleString('default', { weekday: 'short' }),
+        month: getDate.toLocaleString('default', { month: 'short' }),
+        year: getDate.getFullYear()
+      }
     }));
 
     tasksLeft = document.getElementsByClassName('task').length + checked
@@ -51,7 +60,7 @@ function removeTask(idd) {
   tasksLeft = document.getElementsByClassName('task').length + checked;
   left.innerText = tasksLeft;
   done.innerText = completedTasks;
-  
+
 }
 // Events handlers
 window.onload = () => {
@@ -60,9 +69,15 @@ window.onload = () => {
     tasks.innerHTML +=
       `
       <div id="${key}div" class="task ${taskData.taskType}">
-      <input type="checkbox" name="${key}" class="boxes" id="${key}"></span>
-      <label for="${key}" id="${key}label">${key}</label>
-      <img src="/trash.png" onclick="removeTask('${key}')">
+        <input type="checkbox" name="${key}" class="boxes" id="${key}"></span>
+        <label for="${key}" id="${key}label">${key}</label>
+        <span class="taskDate">
+            <span style="font-weight:bold;">
+              Created on:
+            </span>
+        ${taskData.date.hour}, ${taskData.date.day}/${taskData.date.month}/${taskData.date.year} 
+        </span>
+        <img src="/trash.png" onclick="removeTask('${key}')">
       </div>
       `;
     if (taskData.checked === true) {
