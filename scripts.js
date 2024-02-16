@@ -31,7 +31,6 @@ function addTask(task, type) {
       </div>
       `;
     let currentHour = new Date();
-    let am_pm = currentHour.toLocaleTimeString();
     localStorage.setItem(task, JSON.stringify({
       taskType: type,
       checked: false,
@@ -65,33 +64,35 @@ function removeTask(idd) {
 }
 // Events handlers
 window.onload = () => {
-  Object.keys(localStorage).forEach(key => {
-    const taskData = JSON.parse(localStorage.getItem(key))
-    tasks.innerHTML +=
-      `
-      <div id="${key}div" class="task ${taskData.taskType}">
-        <input type="checkbox" name="${key}" class="boxes" id="${key}"></span>
-        <label for="${key}" id="${key}label">${key}</label>
-        <span class="taskDate">
-            <span style="font-weight:bold;">
-              Created on:
-            </span>
-        ${taskData.date.hour}, ${taskData.date.day}/${taskData.date.month}/${taskData.date.year} 
-        </span>
-        <img src="/trash.png" onclick="removeTask('${key}')">
-      </div>
-      `;
-    if (taskData.checked === true) {
-      document.getElementById(key).setAttribute("checked", "true");;
-      document.getElementById(`${key}label`).style.textDecoration = 'line-through';
-      document.getElementById(`${key}label`).style.color = "gray";
-      completedTasks++
-      checked--
-    }
-    tasksLeft = document.getElementsByClassName('task').length + checked;
-    left.innerText = tasksLeft;
-    done.innerText = completedTasks
-  });
+  if (localStorage.length >= 0) {
+    Object.keys(localStorage).forEach(key => {
+      const taskData = JSON.parse(localStorage.getItem(key))
+      tasks.innerHTML +=
+        `
+        <div id="${key}div" class="task ${taskData.taskType}">
+          <input type="checkbox" name="${key}" class="boxes" id="${key}"></span>
+          <label for="${key}" id="${key}label">${key}</label>
+          <span class="taskDate">
+              <span style="font-weight:bold;">
+                Created on:
+              </span>
+          ${taskData.date.hour}, ${taskData.date.day}/${taskData.date.month}/${taskData.date.year} 
+          </span>
+          <img src="/trash.png" onclick="removeTask('${key}')">
+        </div>
+        `;
+      if (taskData.checked === true) {
+        document.getElementById(key).setAttribute("checked", "true");;
+        document.getElementById(`${key}label`).style.textDecoration = 'line-through';
+        document.getElementById(`${key}label`).style.color = "gray";
+        completedTasks++
+        checked--
+      }
+      tasksLeft = document.getElementsByClassName('task').length + checked;
+      left.innerText = tasksLeft;
+      done.innerText = completedTasks
+    });
+  }
   Array.from(newTask).forEach((element) => {
     "keydown click".split(" ").forEach((event) => {
       element.addEventListener(event, (key) => {
